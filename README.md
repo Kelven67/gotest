@@ -7,7 +7,7 @@ utils golang sdk to upop srv req (商户接入中国银联UPOP系统), SDK rev 0
 golang 1.2+ 
 
 ==== 使用说明 ====
-
+```go
 /*
 	var req = upop.NewPayReq().And(upop.UpopPkgParams{ 
 			"orderTime":    ot, 
@@ -115,7 +115,7 @@ ret:
 	this.Data["json"] = &result
 	this.ServeJson()
 }
-
+```
 
 
 
