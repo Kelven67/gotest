@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Gotest by Kelven67</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Gotest</h1>
+        <p>utils golang sdk to upop srv req (商户接入中国银联UPOP系统)</p>
+
+        <p class="view"><a href="https://github.com/Kelven67/gotest">View the Project on GitHub <small>Kelven67/gotest</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/Kelven67/gotest/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Kelven67/gotest/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Kelven67/gotest">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="gotest" class="anchor" href="#gotest"><span class="octicon octicon-link"></span></a>gotest</h1>
+
+<h3>
+<a name="u1-upop-utils" class="anchor" href="#u1-upop-utils"><span class="octicon octicon-link"></span></a>u1) upop utils</h3>
+
+<p>utils golang sdk to upop srv req (商户接入中国银联UPOP系统), SDK rev 0.0.1.</p>
+
+<p>==== 基本要求 ====</p>
+
+<p>golang 1.2+ </p>
+
+<p>==== 使用说明 ====</p>
+
+<div class="highlight highlight-go"><pre><span class="cm">/*</span>
+<span class="cm">    var req = upop.NewPayReq().And(upop.UpopPkgParams{ </span>
+<span class="cm">            "orderTime":    ot, </span>
+<span class="cm">            "orderTimeout": oto, </span>
+<span class="cm">            "orderNumber":  orderNumber, </span>
+<span class="cm">            "orderAmount":  orderAmount, </span>
+<span class="cm">        })</span>
+<span class="cm">*/</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">ServiceController</span><span class="p">)</span> <span class="nx">Pay</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">beego</span><span class="p">.</span><span class="nx">Debug</span><span class="p">(</span><span class="s">"---------2.20 Pay: "</span><span class="p">)</span>
+    <span class="nx">now</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+    <span class="nx">result</span> <span class="o">:=</span> <span class="nx">PayTnResult</span><span class="p">{</span><span class="nx">Timestamp</span><span class="p">:</span> <span class="nx">now</span><span class="p">.</span><span class="nx">Unix</span><span class="p">(),</span> <span class="nx">Code</span><span class="p">:</span> <span class="nx">CODE_FAIL</span><span class="p">,</span> <span class="nx">Msg</span><span class="p">:</span> <span class="nx">MSG_TOKEN_IS_INVALID</span><span class="p">}</span>
+
+    <span class="c1">//check token</span>
+    <span class="nx">token</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">GetReqString</span><span class="p">(</span><span class="s">"token"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+    <span class="nx">uid</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">validationToken</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">uid</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="nx">orderNumber</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">GetReqString</span><span class="p">(</span><span class="s">"orderNumber"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+        <span class="nx">orderAmount</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">GetReqString</span><span class="p">(</span><span class="s">"orderAmount"</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+        <span class="c1">//check orderNumber</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">orderNumber</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="s">"ReqOrderNumberIsnull"</span>
+            <span class="k">goto</span> <span class="nx">ret</span>
+        <span class="p">}</span>
+        <span class="c1">//check orderAmount</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">orderAmount</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="s">"ReqOrderAmountIsnull"</span>
+            <span class="k">goto</span> <span class="nx">ret</span>
+        <span class="p">}</span>
+
+        <span class="nx">d</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">ParseDuration</span><span class="p">(</span><span class="s">"30m"</span><span class="p">)</span>
+        <span class="nx">ot</span> <span class="o">:=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">Format</span><span class="p">(</span><span class="s">"20060102150405"</span><span class="p">)</span> <span class="c1">//format -&gt; 2006-01-02 15:04:05</span>
+        <span class="nx">oto</span> <span class="o">:=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">d</span><span class="p">).</span><span class="nx">Format</span><span class="p">(</span><span class="s">"20060102150405"</span><span class="p">)</span>
+
+        <span class="kd">var</span> <span class="nx">req</span> <span class="p">=</span> <span class="nx">upop</span><span class="p">.</span><span class="nx">UpopPkgParams</span><span class="p">{</span>
+            <span class="s">"version"</span><span class="p">:</span>          <span class="nx">upop</span><span class="p">.</span><span class="nx">Version</span><span class="p">,</span>
+            <span class="s">"charset"</span><span class="p">:</span>          <span class="nx">upop</span><span class="p">.</span><span class="nx">Charset</span><span class="p">,</span>
+            <span class="s">"transType"</span><span class="p">:</span>        <span class="nx">upop</span><span class="p">.</span><span class="nx">TransType_01</span><span class="p">,</span> <span class="c1">//交易类型</span>
+            <span class="s">"merId"</span><span class="p">:</span>            <span class="nx">upop</span><span class="p">.</span><span class="nx">MerCode</span><span class="p">,</span>      <span class="c1">//商户代码</span>
+            <span class="s">"backEndUrl"</span><span class="p">:</span>       <span class="nx">upop</span><span class="p">.</span><span class="nx">MerBackEndUrl</span><span class="p">,</span>
+            <span class="s">"frontEndUrl"</span><span class="p">:</span>      <span class="s">""</span><span class="p">,</span>
+            <span class="s">"acqCode"</span><span class="p">:</span>          <span class="s">""</span><span class="p">,</span>
+            <span class="s">"orderTime"</span><span class="p">:</span>        <span class="nx">ot</span><span class="p">,</span>  <span class="c1">//交易开始时间</span>
+            <span class="s">"orderTimeout"</span><span class="p">:</span>     <span class="nx">oto</span><span class="p">,</span> <span class="c1">//订单超时时间</span>
+            <span class="s">"orderNumber"</span><span class="p">:</span>      <span class="nx">orderNumber</span><span class="p">,</span>
+            <span class="s">"orderAmount"</span><span class="p">:</span>      <span class="nx">orderAmount</span><span class="p">,</span>
+            <span class="s">"orderCurrency"</span><span class="p">:</span>    <span class="nx">upop</span><span class="p">.</span><span class="nx">Currency_CN</span><span class="p">,</span> <span class="c1">//交易币种</span>
+            <span class="s">"orderDescription"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"merReserved"</span><span class="p">:</span>      <span class="s">""</span><span class="p">,</span>
+            <span class="s">"reqReserved"</span><span class="p">:</span>      <span class="s">""</span><span class="p">,</span>
+            <span class="s">"sysReserved"</span><span class="p">:</span>      <span class="s">""</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1">//beego.Debug("req(1):", req)</span>
+        <span class="nx">req</span><span class="p">.</span><span class="nx">Encode</span><span class="p">(</span><span class="nx">upop</span><span class="p">.</span><span class="nx">SignType</span><span class="p">)</span> <span class="c1">//signstr</span>
+        <span class="c1">//beego.Debug("req(2):", req)</span>
+
+        <span class="c1">//req UPMP srv</span>
+        <span class="kd">var</span> <span class="nx">strurl</span> <span class="kt">string</span>
+        <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+        <span class="nx">b</span> <span class="o">:=</span> <span class="nx">httplib</span><span class="p">.</span><span class="nx">Post</span><span class="p">(</span><span class="nx">upop</span><span class="p">.</span><span class="nx">GateWay</span><span class="p">)</span>
+        <span class="c1">//b.SetTLSClientConfig(&amp;tls.Config{InsecureSkipVerify: true})</span>
+        <span class="c1">//upop.SortFor(req, func(idx int32, k, v string) {</span>
+        <span class="c1">//  beego.Debug("k:", k, ",v:", v)</span>
+        <span class="c1">//  b.Param(k, v)</span>
+        <span class="c1">//})</span>
+        <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">req</span> <span class="p">{</span>
+            <span class="nx">b</span><span class="p">.</span><span class="nx">Param</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="kc">false</span> <span class="p">{</span>
+            <span class="nx">strurl</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">SetTimeout</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span> <span class="mi">30</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">).</span><span class="nx">String</span><span class="p">()</span> <span class="c1">//strurl</span>
+            <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+                <span class="nx">beego</span><span class="p">.</span><span class="nx">Debug</span><span class="p">(</span><span class="s">"err:"</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+                <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="s">"ReqUpopIsException"</span>
+                <span class="k">goto</span> <span class="nx">ret</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">strurl</span> <span class="p">=</span> <span class="s">"charset=UTF-8&amp;merReserved=&amp;reqReserved=&amp;respCode=00&amp;respMsg=ok&amp;sysReserved=&amp;tn=A0000000000001&amp;transType=01&amp;version=1.0.0&amp;signMethod=MD5&amp;signature=e6d1877889422a8b21d9d1a2cd91dfb8"</span>
+        <span class="p">}</span>
+
+        <span class="nx">beego</span><span class="p">.</span><span class="nx">Debug</span><span class="p">(</span><span class="s">"strurl:"</span><span class="p">,</span> <span class="nx">strurl</span><span class="p">)</span>
+
+        <span class="kd">var</span> <span class="nx">rep</span> <span class="p">=</span> <span class="nx">upop</span><span class="p">.</span><span class="nx">UpopPkgParams</span><span class="p">{}</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">Decode</span><span class="p">(</span><span class="nx">strurl</span><span class="p">)</span>
+        <span class="nx">cs</span> <span class="o">:=</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">CheckSecurity</span><span class="p">(</span><span class="nx">upop</span><span class="p">.</span><span class="nx">SecurityKey</span><span class="p">)</span>
+
+        <span class="c1">//check reps sign</span>
+        <span class="k">if</span> <span class="nx">cs</span> <span class="o">==</span> <span class="kc">false</span> <span class="p">{</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="s">"UpopRepCheckSecurityError"</span>
+            <span class="k">goto</span> <span class="nx">ret</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">cs</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">&amp;&amp;</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">RespCode</span><span class="p">()</span> <span class="o">==</span> <span class="s">"00"</span> <span class="o">&amp;&amp;</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="c1">//do the business logic</span>
+            <span class="nx">beego</span><span class="p">.</span><span class="nx">Debug</span><span class="p">(</span><span class="s">"tn"</span><span class="p">,</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">Tn</span><span class="p">())</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Tn</span> <span class="p">=</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">Tn</span><span class="p">()</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Code</span> <span class="p">=</span> <span class="nx">CODE_SUCC</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="nx">MSG_SUCCESS</span>
+            <span class="k">goto</span> <span class="nx">ret</span>
+        <span class="p">}</span>
+
+        <span class="nx">result</span><span class="p">.</span><span class="nx">Msg</span> <span class="p">=</span> <span class="s">"Error_"</span> <span class="o">+</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">RespCode</span><span class="p">()</span> <span class="o">+</span> <span class="s">"_"</span> <span class="o">+</span> <span class="nx">rep</span><span class="p">.</span><span class="nx">RespMsg</span><span class="p">()</span>
+        <span class="k">goto</span> <span class="nx">ret</span>
+
+    <span class="p">}</span>
+<span class="nx">ret</span><span class="p">:</span>
+    <span class="nx">this</span><span class="p">.</span><span class="nx">Data</span><span class="p">[</span><span class="s">"json"</span><span class="p">]</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">result</span>
+    <span class="nx">this</span><span class="p">.</span><span class="nx">ServeJson</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Kelven67">Kelven67</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
