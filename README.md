@@ -1,20 +1,22 @@
 gotest
 ======
-utils to upop srv req (ÉÌ»§½ÓÈëÖĞ¹úÒøÁªUPOPÏµÍ³), SDK rev 0.0.1.
+utils golang sdk to upop srv req (å•†æˆ·æ¥å…¥ä¸­å›½é“¶è”UPOPç³»ç»Ÿ), SDK rev 0.0.1.
 
-==== »ù±¾ÒªÇó ====
+==== åŸºæœ¬è¦æ±‚ ====
 
+golang 1.2+ 
 
-==== Ê¹ÓÃËµÃ÷ ====
+==== ä½¿ç”¨è¯´æ˜ ====
 
 /*
-	var req = upop.NewPayReq().And(upop.UpopPkgParams{
-			"orderTime":    ot,
-			"orderTimeout": oto,
-			"orderNumber":  orderNumber,
-			"orderAmount":  orderAmount,
+	var req = upop.NewPayReq().And(upop.UpopPkgParams{ 
+			"orderTime":    ot, 
+			"orderTimeout": oto, 
+			"orderNumber":  orderNumber, 
+			"orderAmount":  orderAmount, 
 		})
 */
+
 func (this *ServiceController) Pay() {
 	beego.Debug("---------2.20 Pay: ")
 	now := time.Now()
@@ -44,16 +46,16 @@ func (this *ServiceController) Pay() {
 		var req = upop.UpopPkgParams{
 			"version":          upop.Version,
 			"charset":          upop.Charset,
-			"transType":        upop.TransType_01, //½»Ò×ÀàĞÍ
-			"merId":            upop.MerCode,      //ÉÌ»§´úÂë
+			"transType":        upop.TransType_01, //äº¤æ˜“ç±»å‹
+			"merId":            upop.MerCode,      //å•†æˆ·ä»£ç 
 			"backEndUrl":       upop.MerBackEndUrl,
 			"frontEndUrl":      "",
 			"acqCode":          "",
-			"orderTime":        ot,  //½»Ò×¿ªÊ¼Ê±¼ä
-			"orderTimeout":     oto, //¶©µ¥³¬Ê±Ê±¼ä
+			"orderTime":        ot,  //äº¤æ˜“å¼€å§‹æ—¶é—´
+			"orderTimeout":     oto, //è®¢å•è¶…æ—¶æ—¶é—´
 			"orderNumber":      orderNumber,
 			"orderAmount":      orderAmount,
-			"orderCurrency":    upop.Currency_CN, //½»Ò×±ÒÖÖ
+			"orderCurrency":    upop.Currency_CN, //äº¤æ˜“å¸ç§
 			"orderDescription": "",
 			"merReserved":      "",
 			"reqReserved":      "",
@@ -113,6 +115,8 @@ ret:
 	this.Data["json"] = &result
 	this.ServeJson()
 }
+
+
 
 
 
